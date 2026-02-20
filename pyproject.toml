@@ -9,3 +9,7 @@ dependencies = []
 
 [dependency-groups]
 test = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=45"]
+build-backend = "setuptools.build_meta"

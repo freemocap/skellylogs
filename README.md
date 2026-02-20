@@ -167,46 +167,6 @@ def configure_logging(
 | `log_file_path`    | `str \| None`                 | `None`                        | Log file path. `None` = `~/skellylogs_data/logs/<timestamp>.log` |
 | `suppress_packages`| `dict[str, int] \| None`      | `None` (uses `DEFAULT_NOISY_PACKAGES`) | Third-party logger suppression map. `{}` = suppress nothing |
 
-## Migration from Inline Logging Configuration
-
-If you're currently using the `system/logging_configuration` module from `freemocap` or `skellycam`:
-
-1. `pip install skellylogs`
-2. Delete your `system/logging_configuration/` directory
-3. Replace imports:
-   ```python
-   # Before
-   from myapp.system.logging_configuration.configure_logging import configure_logging
-   from myapp.system.logging_configuration.log_levels import LogLevels
-
-   # After
-   from skellylogs import configure_logging, LogLevels
-   ```
-4. If your `logger_builder.py` imported `get_log_file_path` from your app's `default_paths` module, you now pass the path directly:
-   ```python
-   from myapp.system.default_paths import get_log_file_path
-
-   configure_logging(level=LogLevels.DEBUG, log_file_path=get_log_file_path())
-   ```
-
-The websocket queue imports change similarly:
-```python
-# Before
-from myapp.system.logging_configuration.handlers.websocket_log_queue_handler import (
-    get_websocket_log_queue,
-    LogRecordModel,
-)
-
-# After
-from skellylogs.handlers.websocket_log_queue_handler import (
-    get_websocket_log_queue,
-    LogRecordModel,
-)
-```
-
-## Dependencies
-
-- `pydantic` (for `LogRecordModel` serialization in the websocket handler)
 
 ## License
 
