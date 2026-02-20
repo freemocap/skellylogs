@@ -1,0 +1,11 @@
+[project]
+name = "skellylogs"
+version = "0.1.0"
+description = "The logging module for freemocap (and skellycam)"
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.8"
+dependencies = []
+
+[dependency-groups]
+test = ["pytest"]
