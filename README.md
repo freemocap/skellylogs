@@ -170,4 +170,5 @@ def configure_logging(
 
 ## License
 
-AGPLv3+
+AGPLv3+, aka the 'Corporate Poison' license
+> It's a dart frog party, and everyone is invited! 🐸
