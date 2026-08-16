@@ -146,3 +146,12 @@ def test_file_handler_level_is_trace(log_file_path: str) -> None:
     file_handlers = [h for h in root.handlers if isinstance(h, logging.FileHandler)]
     assert len(file_handlers) == 1
     assert file_handlers[0].level == LogLevels.TRACE.value
+
+
+def test_configure_logging_without_websocket(log_file_path: str) -> None:
+    configure_logging(level=LogLevels.DEBUG, log_file_path=log_file_path, use_websocket=False)
+    root = logging.getLogger()
+    handler_types = {type(h) for h in root.handlers}
+    assert WebSocketQueueHandler not in handler_types
+    assert ColoredConsoleHandler in handler_types
+    assert logging.FileHandler in handler_types

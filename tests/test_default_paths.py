@@ -48,3 +48,9 @@ def test_get_log_file_path_is_filename_friendly() -> None:
     # Remove the .log extension for checking
     stem = filename[:-4]
     assert ":" not in stem
+
+
+def test_get_log_file_path_honors_env_var_override(monkeypatch, tmp_path) -> None:
+    monkeypatch.setenv("SKELLYLOGS_LOG_DIR", str(tmp_path))
+    path = get_log_file_path()
+    assert path.startswith(str(tmp_path))

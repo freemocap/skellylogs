@@ -1,12 +1,28 @@
 from __future__ import annotations
+import atexit
 import logging
 import multiprocessing
 
 from skellylogs.default_paths import get_log_file_path
-from skellylogs.handlers.websocket_log_queue_handler import create_websocket_log_queue
+from skellylogs.handlers.websocket_log_queue_handler import create_websocket_log_queue, get_websocket_log_queue
 from skellylogs.log_levels import LogLevels
 from skellylogs.logger_builder import LoggerBuilder
 from skellylogs.package_log_quieters import DEFAULT_NOISY_PACKAGES, suppress_noisy_package_logs
+
+
+def _cleanup_log_queue() -> None:
+    """Close the websocket log queue and join its background feeder thread.
+
+    Registered as an atexit handler so every process that calls
+    configure_logging() gets automatic cleanup without the consumer
+    needing to know about the internal queue.
+    """
+    try:
+        q = get_websocket_log_queue()
+    except ValueError:
+        return  # queue was never created
+    q.close()
+    q.join_thread()
 
 
 def _add_log_method(level: LogLevels, name: str) -> None:
@@ -35,8 +51,9 @@ def configure_logging(
     ws_queue: multiprocessing.Queue | None = None,
     log_file_path: str | None = None,
     suppress_packages: dict[str, int] | None = None,
+    use_websocket: bool = True,
 ) -> None:
-    """Configure the root logger with colored console, file, and websocket handlers.
+    """Configure the root logger with colored console, file, and (optionally) websocket handlers.
 
     Args:
         level: Minimum log level for console and websocket handlers.
@@ -45,10 +62,13 @@ def configure_logging(
             If None and running in a child process, logging setup is skipped
             (the child should receive the queue from the parent).
         log_file_path: Path for the log file. If None, defaults to
-            ~/skellylogs_data/logs/<iso8601_timestamp>.log.
+            ~/skellylogs_data/logs/<iso8601_timestamp>.log (or
+            $SKELLYLOGS_LOG_DIR/logs when that env var is set).
         suppress_packages: Map of {logger_name: level} for noisy third-party
             loggers. Defaults to DEFAULT_NOISY_PACKAGES. Pass an empty dict
             to suppress nothing.
+        use_websocket: When False, skip the websocket queue + handler entirely
+            (console + file only). Defaults to True.
     """
     if suppress_packages is None:
         suppress_packages = DEFAULT_NOISY_PACKAGES
@@ -56,11 +76,15 @@ def configure_logging(
 
     _register_custom_levels()
 
-    if ws_queue is None:
-        # Do not create a new queue if not in the main process
-        if not multiprocessing.current_process().name.lower() == "mainprocess":
-            return
-        ws_queue = create_websocket_log_queue()
+    if use_websocket:
+        if ws_queue is None:
+            # Do not create a new queue if not in the main process
+            if not multiprocessing.current_process().name.lower() == "mainprocess":
+                return
+            ws_queue = create_websocket_log_queue()
+            atexit.register(_cleanup_log_queue)
+    else:
+        ws_queue = None
 
     if log_file_path is None:
         log_file_path = get_log_file_path()

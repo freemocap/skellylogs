@@ -1,12 +1,19 @@
+import os
 import time
 from datetime import datetime
 from pathlib import Path
 
 DEFAULT_SKELLYLOGS_BASE_FOLDER_NAME = "skellylogs_data"
 LOGS_FOLDER_NAME = "logs"
+# Redirect the log directory (tests, CI, sandboxes, or anyone who doesn't want
+# logs under ~). Defaults to ~/skellylogs_data.
+SKELLYLOGS_LOG_DIR_ENV_VAR = "SKELLYLOGS_LOG_DIR"
 
 
 def _get_base_folder_path() -> Path:
+    override = os.environ.get(SKELLYLOGS_LOG_DIR_ENV_VAR)
+    if override:
+        return Path(override)
     return Path.home() / DEFAULT_SKELLYLOGS_BASE_FOLDER_NAME
 
 
