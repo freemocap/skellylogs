@@ -16,7 +16,7 @@ as a Git dependency. Public package-index availability is not assumed.
 For a standalone tool without a websocket consumer, use
 `configure_logging(level=LogLevels.DEBUG, use_websocket=False)`. Console and file
 logging remain enabled; no IPC queue is created. See
-[logging lifecycle findings](LOGGING_LIFECYCLE_HANDOFF.md) for the current relay
+[logging lifecycle findings](notes/LOGGING_LIFECYCLE_HANDOFF.md) for the current relay
 shutdown limitation and application integration work.
 
 ## Quick Start
