@@ -7,8 +7,17 @@ Provides colorized console output with per-process/per-thread color hashing, del
 ## Install
 
 ```bash
-pip install skellylogs
+pip install .
 ```
+
+Run this from a SkellyLogs source checkout. FreeMoCap also declares the package
+as a Git dependency. Public package-index availability is not assumed.
+
+For a standalone tool without a websocket consumer, use
+`configure_logging(level=LogLevels.DEBUG, use_websocket=False)`. Console and file
+logging remain enabled; no IPC queue is created. See
+[logging lifecycle findings](LOGGING_LIFECYCLE_HANDOFF.md) for the current relay
+shutdown limitation and application integration work.
 
 ## Quick Start
 

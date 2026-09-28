@@ -29,11 +29,13 @@ class LoggerBuilder:
         root.setLevel(self.level.value)
         # Stringify live traceback objects before any handler sees the record,
         # to avoid pickling errors when sending to the frontend
-        root.addFilter(StringifyTracebackFilter())
+        if not any(isinstance(f, StringifyTracebackFilter) for f in root.filters):
+            root.addFilter(StringifyTracebackFilter())
 
         # Clear existing handlers
         for handler in root.handlers[:]:
             root.removeHandler(handler)
+            handler.close()
 
         # Add handlers
         root.addHandler(self._build_file_handler())

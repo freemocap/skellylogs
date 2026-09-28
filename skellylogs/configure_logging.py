@@ -82,6 +82,7 @@ def configure_logging(
             if not multiprocessing.current_process().name.lower() == "mainprocess":
                 return
             ws_queue = create_websocket_log_queue()
+            atexit.unregister(_cleanup_log_queue)
             atexit.register(_cleanup_log_queue)
     else:
         ws_queue = None
