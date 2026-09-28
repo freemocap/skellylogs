@@ -13,6 +13,12 @@ pip install .
 Run this from a SkellyLogs source checkout. FreeMoCap also declares the package
 as a Git dependency. Public package-index availability is not assumed.
 
+Package discovery explicitly includes only `skellylogs` and its subpackages.
+Repository folders such as `notes` and `tests` are not importable distributions.
+To check source-archive and wheel builds, run `uv build --out-dir <output-folder>`;
+then install the wheel into a fresh environment and run the tests against that
+installed package from outside the checkout.
+
 For a standalone tool without a websocket consumer, use
 `configure_logging(level=LogLevels.DEBUG, use_websocket=False)`. Console and file
 logging remain enabled; no IPC queue is created. See
