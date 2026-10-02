@@ -99,8 +99,42 @@ class LogRecordModel:
             "stack_info": self.stack_info,
         }
 
+    def to_log_record(self) -> logging.LogRecord:
+        record = logging.makeLogRecord(
+            {
+                "name": self.name,
+                "msg": self.message,
+                "args": (),
+                "levelname": self.levelname,
+                "levelno": self.levelno,
+                "pathname": self.pathname,
+                "filename": self.filename,
+                "module": self.module,
+                "lineno": self.lineno,
+                "funcName": self.funcName,
+                "created": self.created,
+                "msecs": self.msecs,
+                "relativeCreated": self.relativeCreated,
+                "thread": self.thread,
+                "threadName": self.threadName,
+                "processName": self.processName,
+                "process": self.process,
+                "stack_info": self.stack_info,
+            }
+        )
+
+        record.delta_t = self.delta_t
+
+        record.exc_text = self.exc_info or self.exc_text
+
+        return record  
+
     def model_dump_json(self, indent:int=2) -> str:
         return json.dumps(self.model_dump(), indent=indent)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "LogRecordModel":
+        return cls(**data)
 
 
 class WebSocketQueueHandler(logging.Handler):
