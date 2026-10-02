@@ -124,7 +124,6 @@ class LogRecordModel:
         )
 
         record.delta_t = self.delta_t
-
         record.exc_text = self.exc_info or self.exc_text
 
         return record  
