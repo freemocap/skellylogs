@@ -52,6 +52,7 @@ def configure_logging(
     log_file_path: str | None = None,
     suppress_packages: dict[str, int] | None = None,
     use_websocket: bool = True,
+    use_file_handler: bool = True,
 ) -> None:
     """Configure the root logger with colored console, file, and (optionally) websocket handlers.
 
@@ -69,6 +70,8 @@ def configure_logging(
             to suppress nothing.
         use_websocket: When False, skip the websocket queue + handler entirely
             (console + file only). Defaults to True.
+        use_file_handler: When False, do not create a FileHandler. Useful for 
+        child processes whose logs are forwarded to the parent process through ws_queue.
     """
     if suppress_packages is None:
         suppress_packages = DEFAULT_NOISY_PACKAGES
@@ -87,8 +90,8 @@ def configure_logging(
     else:
         ws_queue = None
 
-    if log_file_path is None:
+    if use_file_handler and log_file_path is None:
         log_file_path = get_log_file_path()
 
-    builder = LoggerBuilder(level=level, queue=ws_queue, log_file_path=log_file_path)
+    builder = LoggerBuilder(level=level, queue=ws_queue, log_file_path=log_file_path, use_file_handler=use_file_handler)
     builder.configure()
