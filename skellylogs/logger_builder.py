@@ -17,7 +17,7 @@ class LoggerBuilder:
         self,
         level: LogLevels,
         queue: Queue | None,
-        log_file_path: str,
+        log_file_path: str | None,
         use_file_handler: bool = True,
     ) -> None:
         self.level = level
