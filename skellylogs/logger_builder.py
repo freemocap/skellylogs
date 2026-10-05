@@ -17,11 +17,13 @@ class LoggerBuilder:
         self,
         level: LogLevels,
         queue: Queue | None,
-        log_file_path: str,
+        log_file_path: str | None,
+        use_file_handler: bool = True,
     ) -> None:
         self.level = level
         self.queue = queue
         self.log_file_path = log_file_path
+        self.use_file_handler = use_file_handler
         dictConfig({"version": 1, "disable_existing_loggers": False})
 
     def _configure_root_logger(self) -> None:
@@ -38,7 +40,9 @@ class LoggerBuilder:
             handler.close()
 
         # Add handlers
-        root.addHandler(self._build_file_handler())
+
+        if self.use_file_handler:
+            root.addHandler(self._build_file_handler()) 
 
         if self.queue:
             root.addHandler(self._build_websocket_handler())
