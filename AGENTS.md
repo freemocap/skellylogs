@@ -15,5 +15,4 @@ dated findings before treating them as current failures or completed fixes.
 Search existing handlers and configuration before adding replacement lifecycle
 logic. Continue authorized work when the next action's purpose and owner are
 clear; ask only for consequential intent unresolved by inspection. Follow
-workspace policy when present, preserve existing edits, leave Git state to the
-human, and verify output paths are ignored or external before diagnostics.
+workspace policy when present, preserve existing edits, follow the workspace Git authorization and repository-scope policy, and verify output paths are ignored or external before diagnostics.
